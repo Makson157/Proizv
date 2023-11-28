@@ -1,25 +1,49 @@
-import sqlite3
 import sys
-
 from PyQt5 import uic
-from PyQt5.QtWidgets import QApplication
-from PyQt5.QtWidgets import QMainWindow, QTableWidgetItem
+from random import randint
+from PyQt5.QtGui import QPainter, QColor
+from PyQt5.QtWidgets import QMainWindow, QApplication, QPushButton
 
 
-class MyWidget(QMainWindow):
+class Design(QMainWindow):
     def __init__(self):
         super().__init__()
-        uic.loadUi("main.ui", self)
-        self.con = sqlite3.connect("coffee.sqlite")
-        self.execute_query_and_fill_table(
-            f"SELECT Coffee.id, Coffe.title, obgarka.title, Pomol.title, Coffe.opis,  "
-            f"FROM coffee"
-            f"INNER JOIN id_obg ON id_obg.id = Coffee.obgarka "
-            f"INNER JOIN Pomol ON id_pom.id = coffee.Pomol;")
+        self.initUi()
+
+    def initUi(self):
+        self.resize(650, 420)
+        self.btn = QPushButton('ЖМИ', self)
+        self.btn.move(50, 50)
+
+
+class Example(Design):
+    def __init__(self):
+        super().__init__()
+        uic.loadUi('Ui.ui', self)
+        self.flag = False
+        self.pushButton.clicked.connect(self.go_paint)
+
+    def go_paint(self):
+        self.qp = QPainter()
+        self.flag = True
+        self.update()
+
+    def paintEvent(self, event):
+        if self.flag:
+            self.qp.begin(self)
+            self.draw_flag(self.qp)
+            self.qp.end()
+
+    def draw_flag(self, qp):
+        qp.setBrush(QColor(255, 255, 0))
+        # Рисуем прямоугольник заданной кистью
+        x, y = randint(0, 316), randint(0, 267)
+        d = randint(10, 30)
+        self.qp.drawEllipse(x, y, d, d)
 
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
-    ex = MyWidget()
+    ex = Example()
     ex.show()
     sys.exit(app.exec())
